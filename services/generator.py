@@ -28,7 +28,7 @@ async def _call_gemini(prompt: str) -> str:
         model="gemini-2.5-flash",
         contents=prompt,
     )
-    return response.text
+    return response.text #type: ignore
 
 
 def _stack_prompt(raw) -> str:

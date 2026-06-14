@@ -10,13 +10,14 @@ load_dotenv()
 
 from services.database import init_db
 from routers import auth, dashboard
-from routers.mcp import build_mcp_app
+from routers.mcp import mcp_asgi_app, mcp_lifespan
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await init_db()
-    yield
+    async with mcp_lifespan(app):
+        await init_db()
+        yield
 
 
 app = FastAPI(title="unbiased", lifespan=lifespan)
@@ -25,4 +26,4 @@ app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 
 app.include_router(auth.router)
 app.include_router(dashboard.router)
-app.mount("/mcp", build_mcp_app())
+app.mount("/mcp", mcp_asgi_app)
