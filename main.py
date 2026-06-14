@@ -20,7 +20,7 @@ async def lifespan(app: FastAPI):
         yield
 
 
-app = FastAPI(title="unbiased", lifespan=lifespan)
+app = FastAPI(title="unbiased", lifespan=lifespan, redirect_slashes=False)
 app.add_middleware(SessionMiddleware, secret_key=os.environ["SECRET_KEY"])
 app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 
