@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>unbiased</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0c0c0d;
+            --text: #d4d4d8;
+            --muted: #71717a;
+            --dim: #3f3f46;
+            --faint: #27272a;
+            --rule: #1c1c1f;
+            --accent: #e8e85c;
+            --green: #7dd87d;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "IBM Plex Mono", monospace;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 13px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        a { color: inherit; }
+
+        /* Meta bar */
+        .meta-outer { border-bottom: 1px solid var(--rule); }
+        .meta-bar {
+            max-width: 796px;
+            margin: 0 auto;
+            padding: 0 28px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .meta-logo { color: var(--dim); font-size: 11.5px; }
+        .meta-links { display: flex; gap: 20px; font-size: 11.5px; }
+        .meta-links a { color: var(--muted); text-decoration: none; }
+        .meta-links a:hover { color: var(--text); }
+
+        /* Page body */
+        .wrap { max-width: 740px; margin: 0 auto; padding: 0 28px; }
+
+        /* File command */
+        .file-cmd { padding-top: 48px; font-size: 11.5px; color: var(--dim); }
+        .dollar { color: var(--faint); }
+
+        /* Headline */
+        h1 {
+            font-family: "IBM Plex Sans", sans-serif;
+            font-size: 34px;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            max-width: 560px;
+            margin-top: 16px;
+            line-height: 1.18;
+            color: var(--text);
+        }
+        h1 strong { font-weight: 500; color: #fff; }
+
+        /* Subtitle */
+        .subtitle {
+            font-family: "IBM Plex Sans", sans-serif;
+            font-size: 14px;
+            color: var(--muted);
+            max-width: 520px;
+            margin-top: 18px;
+            line-height: 1.65;
+        }
+
+        /* Key-value block */
+        .kv-block { margin-top: 40px; border-top: 1px solid var(--rule); }
+        .kv-row {
+            display: flex;
+            align-items: baseline;
+            gap: 20px;
+            padding: 9px 0;
+            border-bottom: 1px solid var(--rule);
+            font-size: 12.5px;
+        }
+        .kv-key { min-width: 110px; color: var(--dim); flex-shrink: 0; }
+        .kv-val { color: var(--text); }
+        .green { color: var(--green); }
+
+        /* Section comment */
+        .section-cmt { font-size: 11.5px; color: var(--dim); margin-top: 40px; }
+        .hash { color: var(--faint); }
+
+        /* Steps */
+        .step {
+            display: flex;
+            gap: 16px;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--rule);
+            align-items: flex-start;
+        }
+        .step-idx { color: var(--accent); font-size: 12.5px; min-width: 32px; flex-shrink: 0; padding-top: 2px; }
+        .step-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 5px; }
+        .step-desc { font-family: "IBM Plex Sans", sans-serif; font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+        /* Install card */
+        .install-card {
+            background: #0f0f10;
+            border: 1px solid var(--rule);
+            border-radius: 6px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+        .install-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 14px;
+            border-bottom: 1px solid var(--rule);
+            font-size: 11.5px;
+            color: var(--dim);
+        }
+        .copy-btn {
+            background: none;
+            border: 1px solid var(--dim);
+            color: var(--dim);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 11px;
+            padding: 3px 11px;
+            border-radius: 4px;
+            cursor: pointer;
+            line-height: 1.5;
+        }
+        .copy-btn:hover { color: var(--text); border-color: var(--muted); }
+        .install-body { padding: 12px 14px; font-size: 12.5px; }
+        .ik { color: var(--muted); }
+        .iv { color: var(--green); }
+
+        /* CTA */
+        .cta { margin-top: 28px; padding-bottom: 56px; }
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent);
+            color: #0c0c0d;
+            text-decoration: none;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        .cta-btn:hover { opacity: 0.88; }
+        .cta-btn svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
+        .cta-note { margin-top: 10px; font-size: 11.5px; color: var(--dim); }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--rule);
+            padding: 20px 28px;
+            display: flex;
+            justify-content: space-between;
+            max-width: 796px;
+            margin: 0 auto;
+            font-size: 11.5px;
+            color: var(--dim);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            h1 { font-size: 26px; }
+            .subtitle { font-size: 13px; }
+            .kv-row { gap: 8px; }
+            .kv-key { min-width: 90px; }
+            .step-desc { font-size: 12.5px; }
+            .wrap { padding: 0 18px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="meta-outer">
+        <div class="meta-bar">
+            <span class="meta-logo">unbiased</span>
+            <div class="meta-links">
+                <a href="#">docs</a>
+                <a href="#">github</a>
+                <a href="/login">connect →</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wrap">
+
+        <p class="file-cmd"><span class="dollar">$</span> cat ~/.context/about.md</p>
+
+        <h1>Stop re-explaining your stack to <strong>every AI tool.</strong></h1>
+
+        <p class="subtitle">unbiased reads your GitHub once and serves your developer context — stack, projects, experience — to Claude, Cursor, and any MCP client over a single connection.</p>
+
+        <div class="kv-block">
+            <div class="kv-row">
+                <span class="kv-key">source</span>
+                <span class="kv-val">github · <span class="green">read-only</span></span>
+            </div>
+            <div class="kv-row">
+                <span class="kv-key">generates</span>
+                <span class="kv-val">stack.md · projects.md · experience.md</span>
+            </div>
+            <div class="kv-row">
+                <span class="kv-key">delivery</span>
+                <span class="kv-val">mcp · <span class="green">claude, cursor, claude code</span></span>
+            </div>
+            <div class="kv-row">
+                <span class="kv-key">setup time</span>
+                <span class="kv-val">~60 <span class="green">seconds</span></span>
+            </div>
+        </div>
+
+        <p class="section-cmt"><span class="hash">#</span> how it works</p>
+
+        <div>
+            <div class="step">
+                <span class="step-idx">[0]</span>
+                <div>
+                    <div class="step-title">authorize github</div>
+                    <div class="step-desc">One OAuth click. Reads repos, READMEs, and dependency files. Your code is never stored — only the extracted context.</div>
+                </div>
+            </div>
+            <div class="step">
+                <span class="step-idx">[1]</span>
+                <div>
+                    <div class="step-title">context gets distilled</div>
+                    <div class="step-desc">Your languages, frameworks, and projects become structured markdown. Add goals and current focus by hand.</div>
+                </div>
+            </div>
+            <div class="step">
+                <span class="step-idx">[2]</span>
+                <div>
+                    <div class="step-title">connect once, use everywhere</div>
+                    <div class="step-desc">Paste one URL into your MCP client. Every conversation now begins already knowing who you are and what you build.</div>
+                </div>
+            </div>
+        </div>
+
+        <p class="section-cmt" style="margin-top:40px"><span class="hash">#</span> add to your mcp client</p>
+
+        <div class="install-card">
+            <div class="install-head">
+                <span>claude_desktop_config.json</span>
+                <button class="copy-btn" onclick="this.textContent='copied';setTimeout(()=>this.textContent='copy',1500)">copy</button>
+            </div>
+            <div class="install-body">
+                <span class="ik">url</span> = <span class="iv">https://unbiased.app/mcp?token=&bull;&bull;&bull;&bull;&bull;</span>
+            </div>
+        </div>
+
+        <div class="cta">
+            <a href="/login" class="cta-btn">
+                <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                connect github
+            </a>
+            <p class="cta-note">free · read-only access</p>
+        </div>
+
+    </div>
+
+    <footer>
+        <span>unbiased</span>
+        <span>open source · mcp native</span>
+    </footer>
+
+</body>
+</html>

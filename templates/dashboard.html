@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>unbiased — dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0c0c0d;
+            --text: #d4d4d8;
+            --muted: #71717a;
+            --dim: #3f3f46;
+            --faint: #27272a;
+            --rule: #1c1c1f;
+            --accent: #e8e85c;
+            --green: #7dd87d;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "IBM Plex Mono", monospace;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 13px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        a { color: inherit; text-decoration: none; }
+        .green { color: var(--green); }
+        .dim { color: var(--dim); }
+        .muted { color: var(--muted); }
+
+        /* Meta bar */
+        .meta-outer { border-bottom: 1px solid var(--rule); }
+        .meta-bar {
+            max-width: 796px;
+            margin: 0 auto;
+            padding: 0 28px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .meta-logo { color: var(--dim); font-size: 11.5px; }
+        .meta-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11.5px;
+            color: var(--muted);
+        }
+        .meta-user img {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            border: 1px solid var(--rule);
+        }
+
+        /* Page body */
+        .wrap { max-width: 740px; margin: 0 auto; padding: 0 28px 64px; }
+
+        /* File command */
+        .file-cmd { padding-top: 36px; font-size: 11.5px; color: var(--dim); }
+        .dollar { color: var(--faint); }
+        .hash { color: var(--faint); }
+
+        /* Section comment */
+        .section-cmt { font-size: 11.5px; color: var(--dim); margin-top: 36px; }
+
+        /* Key-value rows */
+        .kv-block { margin-top: 14px; border-top: 1px solid var(--rule); }
+        .kv-row {
+            display: flex;
+            align-items: baseline;
+            gap: 20px;
+            padding: 9px 0;
+            border-bottom: 1px solid var(--rule);
+            font-size: 12.5px;
+        }
+        .kv-key { min-width: 130px; color: var(--dim); flex-shrink: 0; }
+        .kv-val { color: var(--text); }
+
+        /* Status / countdown */
+        .status-line { font-size: 12.5px; color: var(--muted); margin-top: 14px; }
+        .countdown { color: var(--dim); font-size: 11.5px; margin-top: 6px; }
+
+        /* Context file details */
+        details {
+            border-bottom: 1px solid var(--rule);
+        }
+        summary {
+            padding: 12px 0;
+            cursor: pointer;
+            font-size: 12.5px;
+            color: var(--text);
+            user-select: none;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        summary::-webkit-details-marker { display: none; }
+        .sum-arrow { color: var(--faint); font-size: 10px; }
+        details[open] .sum-arrow-right { display: none; }
+        details:not([open]) .sum-arrow-down { display: none; }
+        details pre {
+            padding: 12px 0 16px 16px;
+            font-size: 12px;
+            line-height: 1.7;
+            color: var(--text);
+            white-space: pre-wrap;
+            word-break: break-word;
+            border-left: 2px solid var(--rule);
+            margin: 0 0 4px;
+            background: transparent;
+        }
+
+        /* Install card (MCP + configs) */
+        .install-card {
+            background: #0f0f10;
+            border: 1px solid var(--rule);
+            border-radius: 6px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .install-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 14px;
+            border-bottom: 1px solid var(--rule);
+            font-size: 11.5px;
+            color: var(--dim);
+        }
+        .copy-btn {
+            background: none;
+            border: 1px solid var(--dim);
+            color: var(--dim);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 11px;
+            padding: 3px 11px;
+            border-radius: 4px;
+            cursor: pointer;
+            line-height: 1.5;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .copy-btn:hover { color: var(--text); border-color: var(--muted); }
+        .copy-btn.copied { color: var(--green); border-color: var(--green); }
+        .install-body { padding: 12px 14px; font-size: 12.5px; }
+        .ik { color: var(--muted); }
+        .iv { color: var(--green); }
+
+        /* Token row */
+        .token-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .token-val {
+            flex: 1;
+            font-size: 12px;
+            color: var(--green);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Manual context forms */
+        .context-block { margin-top: 14px; border-top: 1px solid var(--rule); }
+        .ctx-section {
+            padding: 14px 0;
+            border-bottom: 1px solid var(--rule);
+        }
+        .ctx-label {
+            font-size: 12.5px;
+            color: var(--text);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .ctx-hint {
+            font-size: 11.5px;
+            color: var(--dim);
+            margin-bottom: 10px;
+        }
+        textarea {
+            width: 100%;
+            min-height: 96px;
+            background: var(--bg);
+            border: 1px solid var(--rule);
+            border-radius: 4px;
+            color: var(--text);
+            font-size: 12.5px;
+            font-family: "IBM Plex Mono", monospace;
+            padding: 8px 10px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        textarea:focus { outline: none; border-color: var(--accent); }
+        .save-btn {
+            margin-top: 8px;
+            background: none;
+            border: 1px solid var(--dim);
+            color: var(--muted);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 11.5px;
+            padding: 4px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .save-btn:hover { color: var(--text); border-color: var(--muted); }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--rule);
+            padding: 20px 28px;
+            display: flex;
+            justify-content: space-between;
+            max-width: 796px;
+            margin: 0 auto;
+            font-size: 11.5px;
+            color: var(--dim);
+        }
+
+        @media (max-width: 600px) {
+            .wrap { padding: 0 18px 48px; }
+            .kv-row { gap: 8px; }
+            .kv-key { min-width: 100px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="meta-outer">
+        <div class="meta-bar">
+            <span class="meta-logo">unbiased</span>
+            <div class="meta-user">
+                <img src="{{ avatar_url }}" alt="{{ username }}">
+                <span>@{{ username }}</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wrap">
+
+        <!-- GitHub extraction status -->
+        <p class="file-cmd"><span class="dollar">$</span> cat ~/.context/github.md</p>
+
+        {% if repo_count is none %}
+            <p class="section-cmt"><span class="hash">#</span> scanning repos&hellip;</p>
+            <p class="countdown">refreshing in <span id="secs">3</span>s</p>
+            <script>
+                let s = 3;
+                const el = document.getElementById('secs');
+                const timer = setInterval(() => {
+                    s--; el.textContent = s;
+                    if (s <= 0) { clearInterval(timer); location.reload(); }
+                }, 1000);
+            </script>
+        {% else %}
+            <div class="kv-block">
+                <div class="kv-row">
+                    <span class="kv-key">repos scanned</span>
+                    <span class="kv-val"><span class="green">{{ repo_count }}</span></span>
+                </div>
+                <div class="kv-row">
+                    <span class="kv-key">source</span>
+                    <span class="kv-val">github · <span class="green">read-only</span></span>
+                </div>
+            </div>
+            {% if not context.get("stack.md") %}
+                <p class="section-cmt" style="margin-top:18px"><span class="hash">#</span> generating context files&hellip;</p>
+                <p class="countdown">refreshing in <span id="secs2">4</span>s</p>
+                <script>
+                    let s2 = 4;
+                    const el2 = document.getElementById('secs2');
+                    const timer2 = setInterval(() => {
+                        s2--; el2.textContent = s2;
+                        if (s2 <= 0) { clearInterval(timer2); location.reload(); }
+                    }, 1000);
+                </script>
+            {% endif %}
+        {% endif %}
+
+        <!-- Generated context files -->
+        {% if context.get("stack.md") or context.get("projects.md") or context.get("experience.md") %}
+        <p class="section-cmt"><span class="hash">#</span> generated context</p>
+        <div style="margin-top:14px; border-top:1px solid var(--rule)">
+            {% if context.get("stack.md") %}
+            <details open>
+                <summary>
+                    <span class="sum-arrow sum-arrow-right">▶</span>
+                    <span class="sum-arrow sum-arrow-down">▼</span>
+                    stack.md
+                </summary>
+                <pre>{{ context["stack.md"] }}</pre>
+            </details>
+            {% endif %}
+            {% if context.get("projects.md") %}
+            <details>
+                <summary>
+                    <span class="sum-arrow sum-arrow-right">▶</span>
+                    <span class="sum-arrow sum-arrow-down">▼</span>
+                    projects.md
+                </summary>
+                <pre>{{ context["projects.md"] }}</pre>
+            </details>
+            {% endif %}
+            {% if context.get("experience.md") %}
+            <details>
+                <summary>
+                    <span class="sum-arrow sum-arrow-right">▶</span>
+                    <span class="sum-arrow sum-arrow-down">▼</span>
+                    experience.md
+                </summary>
+                <pre>{{ context["experience.md"] }}</pre>
+            </details>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- MCP server -->
+        {% if mcp_token %}
+        <p class="section-cmt"><span class="hash">#</span> add to your mcp client</p>
+
+        <div class="install-card" style="margin-top:12px">
+            <div class="install-head">
+                <span>remote mcp url</span>
+                <button class="copy-btn" id="url-copy-btn" onclick="copyMcpUrl(this)">copy</button>
+            </div>
+            <div class="install-body">
+                <span class="ik">url</span> = <span class="iv" id="mcp-url-val">{{ mcp_url }}</span>
+            </div>
+        </div>
+
+        <div class="install-card" style="margin-top:8px">
+            <div class="install-head">
+                <span>claude_desktop_config.json</span>
+                <button class="copy-btn" onclick="copyClaudeCfg(this)">copy</button>
+            </div>
+            <div class="install-body">
+                <span class="ik">url</span> = <span class="iv">{{ mcp_url }}</span>
+            </div>
+        </div>
+
+        <div style="margin-top:10px">
+            <p style="font-size:11.5px;color:var(--dim);margin-bottom:6px">raw token</p>
+            <div class="token-row">
+                <span class="token-val" id="token-raw">{{ mcp_token }}</span>
+                <button class="copy-btn" onclick="copyText('token-raw', this)">copy</button>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Manual context -->
+        <p class="section-cmt"><span class="hash">#</span> your context</p>
+        <div class="context-block">
+            <div class="ctx-section">
+                <div class="ctx-label">goals.md</div>
+                <div class="ctx-hint">what are you currently working toward?</div>
+                <form method="POST" action="/context/goals">
+                    <textarea name="content">{{ context.get("goals.md", "") }}</textarea>
+                    <button type="submit" class="save-btn">save</button>
+                </form>
+            </div>
+            <div class="ctx-section">
+                <div class="ctx-label">learning.md</div>
+                <div class="ctx-hint">what are you currently learning?</div>
+                <form method="POST" action="/context/learning">
+                    <textarea name="content">{{ context.get("learning.md", "") }}</textarea>
+                    <button type="submit" class="save-btn">save</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <span>unbiased</span>
+        <span>open source · mcp native</span>
+    </footer>
+
+    <script>
+    function copyText(id, btn) {
+        const text = document.getElementById(id).textContent.trim();
+        navigator.clipboard.writeText(text).then(() => {
+            const orig = btn.textContent;
+            btn.textContent = 'copied';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1800);
+        });
+    }
+    function copyMcpUrl(btn) {
+        const text = document.getElementById('mcp-url-val').textContent.trim();
+        navigator.clipboard.writeText(text).then(() => {
+            const orig = btn.textContent;
+            btn.textContent = 'copied';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1800);
+        });
+    }
+    function copyClaudeCfg(btn) {
+        const cfg = JSON.stringify({
+            mcpServers: {
+                unbiased: {
+                    url: {{ mcp_url | tojson }},
+                    transport: "http"
+                }
+            }
+        }, null, 2);
+        navigator.clipboard.writeText(cfg).then(() => {
+            const orig = btn.textContent;
+            btn.textContent = 'copied';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1800);
+        });
+    }
+    </script>
+
+</body>
+</html>
