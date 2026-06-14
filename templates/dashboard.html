@@ -341,9 +341,19 @@
                 <button class="copy-btn" onclick="copyClaudeCfg(this)">copy</button>
             </div>
             <div class="install-body">
-                <span class="ik">url</span> = <span class="iv">{{ mcp_url }}</span>
+                <span class="ik">"unbiased"</span>: {<br>
+                &nbsp;&nbsp;<span class="ik">command</span> = <span class="iv">npx</span><br>
+                &nbsp;&nbsp;<span class="ik">args</span> = [<span class="iv">"-y", "mcp-remote", "{{ mcp_url }}"</span>]<br>
+                }
             </div>
         </div>
+
+        <p style="font-size:11.5px;color:var(--dim);margin-top:8px;line-height:1.7">
+            <span class="hash">#</span> requires node.js · do <strong style="color:var(--muted)">not</strong> use the &ldquo;add connector&rdquo; button &mdash; edit the file directly:<br>
+            &nbsp;&nbsp;windows: <span class="muted">%APPDATA%\Claude\claude_desktop_config.json</span><br>
+            &nbsp;&nbsp;mac:&nbsp;&nbsp;&nbsp;&nbsp; <span class="muted">~/Library/Application Support/Claude/claude_desktop_config.json</span><br>
+            &nbsp;&nbsp;then fully restart claude desktop
+        </p>
 
         <div style="margin-top:10px">
             <p style="font-size:11.5px;color:var(--dim);margin-bottom:6px">raw token</p>
@@ -402,11 +412,12 @@
         });
     }
     function copyClaudeCfg(btn) {
+        const url = {{ mcp_url | tojson }};
         const cfg = JSON.stringify({
             mcpServers: {
                 unbiased: {
-                    url: {{ mcp_url | tojson }},
-                    transport: "http"
+                    command: "npx",
+                    args: ["-y", "mcp-remote", url]
                 }
             }
         }, null, 2);
